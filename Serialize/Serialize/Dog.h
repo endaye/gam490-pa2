@@ -25,9 +25,12 @@ public:
 private:
 	// data to serialize
 	int		x;
-	char	a;
 	float	y;
 	int		z;
+	char	a;
+	char	pad1;
+	char	pad2;
+	char	pad3;
 
 };
 

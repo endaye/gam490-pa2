@@ -12,14 +12,14 @@ Dog::Dog(int _x, char _a,float _y, int _z)
 void Dog::deserialize( const char * const buffer ) 
 {
 	// do your magic here
-   UNUSED_VAR(buffer);
+	memcpy(this, buffer, sizeof(Dog));
 }
 
 // Write object to a buffer
 void Dog::serialize( char * const buffer ) const
 {
 	// do your magic here
-   UNUSED_VAR(buffer);
+	memcpy(buffer, this, sizeof(Dog));
 }
 
 int	Dog::getX() const
