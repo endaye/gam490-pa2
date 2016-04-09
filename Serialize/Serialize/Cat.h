@@ -28,13 +28,14 @@ public:
 private:
 
 	// data to serialize
+	double	d;
 	float	x;
-	char	a;
-	char	b;
 	float	y;
 	int		z;
+	char	a;
+	char	b;
 	char	c;
-	double	d;
+	char	pad1;
 
 };
 
