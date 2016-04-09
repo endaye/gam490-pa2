@@ -22,10 +22,12 @@ struct orange
 	orange & operator = (const orange &) = default;
 	~orange() = default;
 
+	float	c;
 	int	    a;
 	char	b;
-	float	c;
 	char	d;
+	char	pad1;
+	char	pad2;
 };
 
 class Fish
@@ -58,12 +60,15 @@ public:
 
 private:
 	// data to serialize
-	int      x;
 	apple    *pApple;
-	char     a;
-	float    y;
 	orange   *pOrange;
-
+	int      x;
+	float    y;
+	char     a;
+	char	 pad1;
+	char	 pad2;
+	char	 pad3;
+	
 };
 
 #endif
