@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "Unused.h"
 #include "Bird.h"
 
@@ -42,13 +43,17 @@ const char *Bird::getS() const
 void Bird::deserialize( const char * const buffer ) 
 {
 	// do your magic here
-   UNUSED_VAR(buffer);
+	memcpy(this, buffer, sizeof(Bird));
+	char *s = (char *)calloc(50, sizeof(char));
+	strcpy_s(s, 50, (const char *)(buffer + sizeof(Bird)));
+	this->s = s;
 }
 
 // Write object to a buffer
 void Bird::serialize( char * const buffer ) const
 {
 	// do your magic here
-   UNUSED_VAR(buffer);
+	memcpy(buffer, this, sizeof(Bird));
+	memcpy(buffer + sizeof(Bird), this->s, 50);
 }
 
