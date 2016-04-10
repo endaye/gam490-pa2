@@ -44,16 +44,24 @@ void Bird::deserialize( const char * const buffer )
 {
 	// do your magic here
 	memcpy(this, buffer, sizeof(Bird));
-	char *s = (char *)calloc(50, sizeof(char));
-	strcpy_s(s, 50, (const char *)(buffer + sizeof(Bird)));
+	int len = (int)(buffer + sizeof(Bird));
+	char *s = (char *)calloc(len, sizeof(char));
+	strcpy_s(s, len, (const char *)(buffer + sizeof(Bird) + sizeof(int)));
 	this->s = s;
 }
 
 // Write object to a buffer
 void Bird::serialize( char * const buffer ) const
 {
+	char * ptr = this->s;
+	int len = 1;
+	while (*ptr++ != '\0') 
+	{
+		len++;
+	}
 	// do your magic here
-	memcpy(buffer, this, sizeof(Bird));
-	memcpy(buffer + sizeof(Bird), this->s, 50);
+	memcpy((buffer), this, sizeof(Bird));
+	memcpy((buffer + sizeof(Bird)), &len, sizeof(int));
+	memcpy((buffer + sizeof(Bird) + sizeof(int)), this->s, 50);
 }
 
