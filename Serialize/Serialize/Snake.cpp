@@ -84,7 +84,7 @@ void Snake::deserialize( const char * const buffer )
 	// do your magic here
 	memcpy(this, buffer, sizeof(Snake));
 	this->pEgg = new Egg();
-	memcpy(this->pEgg, buffer + sizeof(Snake), sizeof(Snake));
+	memcpy(this->pEgg, buffer + sizeof(Snake), sizeof(Egg));
 }
 
 // Write object to a buffer
@@ -109,23 +109,25 @@ void Medusa::deserialize(const char * const buffer)
 	if (numSnake != 0)
 	{
 		const char * tmpBuffer = buffer + sizeof(Medusa) + sizeof(int);
-		Snake *s = (Snake *)calloc(numSnake, sizeof(Snake));
+		Snake ** s = (Snake **)calloc(numSnake, sizeof(Snake*));
 		for (int i = 0; i < numSnake; i++) 
 		{
-			s[i].deserialize(tmpBuffer);
+			s[i] = new Snake();
+			s[i]->deserialize(tmpBuffer);
 			tmpBuffer += sizeof(Snake) + sizeof(Egg);
 		}
 
 		// relink
-		s[0].next = &(s[1]);
-		s[1].next = &(s[2]);
-		s[2].next = &(s[3]);
-		s[3].next = 0;
-		s[0].prev = 0;
-		s[1].prev = &(s[0]);
-		s[2].prev = &(s[1]);
-		s[3].prev = &(s[2]);
-		this->head = &s[0];
+		
+		s[0]->next = s[1];
+		s[1]->next = s[2];
+		s[2]->next = s[3];
+		s[3]->next = 0;
+		s[0]->prev = 0;
+		s[1]->prev = s[0];
+		s[2]->prev = s[1];
+		s[3]->prev = s[2];
+		this->head = s[0];
 	}
 }
 
