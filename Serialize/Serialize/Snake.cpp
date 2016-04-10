@@ -118,15 +118,11 @@ void Medusa::deserialize(const char * const buffer)
 		}
 
 		// relink
-		
-		s[0]->next = s[1];
-		s[1]->next = s[2];
-		s[2]->next = s[3];
-		s[3]->next = 0;
-		s[0]->prev = 0;
-		s[1]->prev = s[0];
-		s[2]->prev = s[1];
-		s[3]->prev = s[2];
+		for (int i = 0; i < numSnake; i++) 
+		{
+			i == 0 ? s[i]->prev = 0 : s[i]->prev = s[i - 1];
+			i == numSnake - 1 ? s[i]->next = 0 : s[i]->next = s[i + 1];
+		}
 		this->head = s[0];
 	}
 }
