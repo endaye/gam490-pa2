@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "Unused.h"
 #include "Snake.h"
 
@@ -81,26 +82,80 @@ const Egg &Snake::getEgg() const
 void Snake::deserialize( const char * const buffer )
 {
 	// do your magic here
-    UNUSED_VAR(buffer);
+	memcpy(this, buffer, sizeof(Snake));
+	this->pEgg = new Egg();
+	memcpy(this->pEgg, buffer + sizeof(Snake), sizeof(Snake));
 }
 
 // Write object to a buffer
 void Snake::serialize( char * const buffer ) const
 {
 	// do your magic here
-    UNUSED_VAR(buffer);
+	memcpy(buffer, this, sizeof(Snake));
+	memcpy(buffer + sizeof(Snake), this->pEgg, sizeof(Egg));
 }
 
 // Read from a buffer
-void Medusa::deserialize( const char * const buffer )
+void Medusa::deserialize(const char * const buffer)
 {
-	// do your magic here
-    UNUSED_VAR(buffer);
+	// deserialize Medusa
+	memcpy(this, buffer, sizeof(Medusa));
+
+	// get the number of Snake
+	int numSnake = 0;
+	memcpy(&numSnake, (buffer + sizeof(Medusa)), sizeof(int));
+
+	// deserialize the Snakes
+	if (numSnake != 0)
+	{
+		const char * tmpBuffer = buffer + sizeof(Medusa) + sizeof(int);
+		Snake *s = (Snake *)calloc(numSnake, sizeof(Snake));
+		for (int i = 0; i < numSnake; i++) 
+		{
+			s[i].deserialize(tmpBuffer);
+			tmpBuffer += sizeof(Snake) + sizeof(Egg);
+		}
+
+		// relink
+		s[0].next = &(s[1]);
+		s[1].next = &(s[2]);
+		s[2].next = &(s[3]);
+		s[3].next = 0;
+		s[0].prev = 0;
+		s[1].prev = &(s[0]);
+		s[2].prev = &(s[1]);
+		s[3].prev = &(s[2]);
+		this->head = &s[0];
+	}
 }
 
 // Write object to a buffer
 void Medusa::serialize( char * const buffer ) const
 {
-	// do your magic here
-    UNUSED_VAR(buffer);
+	// serialize Medusa
+	memcpy(buffer, this, sizeof(Medusa));
+	if (this->head != 0)
+	{
+		// the number of snake
+		int numSnake = 0;
+		Snake * pSnake = (Snake *)this->getHeadSnake();
+		while (pSnake != 0) {
+			numSnake++;
+			pSnake = (Snake*)pSnake->next;
+		}
+
+		// serialize Snakes
+		pSnake = (Snake *)this->getHeadSnake();
+		char * tmpBuffer = buffer + sizeof(Medusa);
+		memcpy(tmpBuffer, &numSnake, sizeof(int));
+
+		tmpBuffer += sizeof(int);
+		for (int i = 0; i < numSnake; i++) 
+		{
+			pSnake->serialize(tmpBuffer);
+			pSnake = (Snake *)pSnake->next;
+			tmpBuffer += sizeof(Snake) + sizeof(Egg);
+		}
+		
+	}
 }
